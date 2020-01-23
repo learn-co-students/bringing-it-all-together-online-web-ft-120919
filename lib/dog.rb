@@ -25,14 +25,7 @@ class Dog
                DB[:conn].execute(sql)
 
     end
-    def update
-        sql = <<-SQL 
-               UPDATE students 
-               SET name = ?, breed = ?
-               WHERE id = ?
-              SQL
-              DB[:conn].execute(sql, self.name, self.breed, self.id)
-    end
+  
 #saves an instance of the dog class to the database and then sets the given dogs `id` attribute
 #returns an instance of the dog class
     def save
