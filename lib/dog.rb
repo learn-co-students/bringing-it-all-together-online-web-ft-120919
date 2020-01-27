@@ -2,10 +2,10 @@ require 'pry'
 
 class Dog
     attr_accessor :name, :breed, :id
-    def initialize(hash)
-        @name = hash[:name]  
-        @breed = hash[:breed]  
-        @id = nil    
+    def initialize(id: nil, name:, breed:)
+        @name = name
+        @breed = breed  
+        @id = id
     end
     def self.create_table
         sql = <<-SQL
@@ -37,7 +37,8 @@ class Dog
             WHERE name = '#{self.name}'
             SQL
             dog_values = DB[:conn].execute(rec)[0]
-            self.id = dog_values[0]
+            # binding.pry
+            self.id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
         else
             sql = <<-SQL
             UPDATE dogs
@@ -73,16 +74,39 @@ class Dog
         SELECT *
         FROM dogs
         WHERE name = '#{val[:name]}' AND breed = '#{val[:breed]}'
+        LIMIT 1
         SQL
         row = DB[:conn].execute(sql)[0]  
         # binding.pry
-        if row          
-            # binding.pry
-            Dog.new_from_db(row)
+        if !row          
+            #  binding.pry
+            Dog.create(val)
+            
 
         else
-            Dog.new(val)                   
+            Dog.new(id: row[0], name: row[1], breed: row[2])
         end
-         
+    end
+    def self.find_by_name(name)
+        sql =  <<-SQL
+        SELECT *
+        FROM dogs
+        WHERE name = '#{name}'
+        SQL
+        row = DB[:conn].execute(sql)[0]
+        Dog.new_from_db(row)      
+        # binding.pry
+  
+    end
+
+    def update
+        sql = <<-SQL
+        UPDATE dogs
+        SET name = '#{self.name}', breed = '#{self.breed}'
+        WHERE id = '#{self.id}'
+        
+        SQL
+        DB[:conn].execute(sql)
+        
     end
 end
