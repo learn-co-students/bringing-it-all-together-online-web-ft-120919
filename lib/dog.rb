@@ -78,14 +78,10 @@ class Dog
         # binding.pry
         if row          
             # binding.pry
-            Dog.new_from_db(row[0])
+            Dog.new_from_db(row)
 
         else
-            dog = {
-                name: val[:name],
-                breed: val[:breed]
-            }
-            Dog.new(dog)                   
+            Dog.new(val)                   
         end
          
     end
