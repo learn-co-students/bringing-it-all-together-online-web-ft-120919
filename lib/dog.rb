@@ -47,10 +47,12 @@ class Dog
     end
        
     def self.new_from_db(row)
-        id = row[0]
-        name = row[1]
-        breed = row[2]
-        attr_hash = {:id => id, :name => name, :breed => breed}
+        self.new.tap do |d|
+        d.id = row[0]
+        d.name = row[1]
+        d.breed = row[2]
+        end
+        # attr_hash = {:id => id, :name => name, :breed => breed}
         # self.new(attr_hash)
         # attr_hash.save
         # binding.pry
